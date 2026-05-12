@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Forest zone definitions: Publicly readable and writable for initial seeding/prototyping
+    match /zones/{zoneId} {
+      allow read, write: if true;
+    }
+    
+    // Citizen reports: 
+    // - Anyone can create a report (public citizen reporting)
+    // - Anyone can read reports (for the public dashboard and alerts feed)
+    // - Only authenticated Rangers can update reports
+    match /complaints/{complaintId} {
+      allow create: if true;
+      allow read: if true;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+    
+    // Help centres/Contact info: Read-only for all
+    match /help_centres/{centreId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

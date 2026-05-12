@@ -1,0 +1,65 @@
+
+{
+  "entities": {
+    "Zone": {
+      "title": "Zone",
+      "description": "A protected forest zone or tiger reserve.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "state": { "type": "string" }
+      },
+      "required": ["id", "name", "lat", "lng", "state"]
+    },
+    "Complaint": {
+      "title": "Complaint",
+      "description": "A fire or smoke report submitted by a citizen.",
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "urgency": { "type": "string", "enum": ["low", "medium", "high"] },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "resolved"] },
+        "source": { "type": "string" },
+        "zone_name": { "type": "string" },
+        "ai_classification": { "type": "object" },
+        "created_at": { "type": "object" },
+        "photo_url": { "type": "string" }
+      },
+      "required": ["description", "urgency", "lat", "lng", "status", "created_at"]
+    },
+    "HelpCentre": {
+      "title": "Help Centre",
+      "description": "Forest range office contact information.",
+      "type": "object",
+      "properties": {
+        "district": { "type": "string" },
+        "state": { "type": "string" },
+        "range_office_name": { "type": "string" },
+        "contact_number": { "type": "string" }
+      },
+      "required": ["district", "state", "range_office_name", "contact_number"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com"]
+  },
+  "firestore": {
+    "/zones/{zoneId}": {
+      "schema": "#/entities/Zone",
+      "description": "Forest zone definitions."
+    },
+    "/complaints/{complaintId}": {
+      "schema": "#/entities/Complaint",
+      "description": "Citizen reports."
+    },
+    "/help_centres/{centreId}": {
+      "schema": "#/entities/HelpCentre",
+      "description": "Forest range office contacts."
+    }
+  }
+}

@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/YOUR_REPO_NAME",
-  assetPrefix: "/YOUR_REPO_NAME/",
+  basePath: "/AGNI-DRUSHTI",
+  assetPrefix: "/AGNI-DRUSHTI/",
 };
 
 export default nextConfig;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, CircleMarker, useMap, LayersControl, useMapEvents, ZoomControl, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -41,13 +41,10 @@ const zoneIcon = (color: string) => L.divIcon({
   iconAnchor: [16, 16],
 });
 
-/**
- * Calculates a LIVE fire risk score based on active NASA FIRMS hotspots.
- */
 const getLiveRisk = (zone: any, hotspots: any[]) => {
   const nearby = hotspots.filter(h => {
     const dist = Math.sqrt(Math.pow(h.lat - zone.lat, 2) + Math.pow(h.lng - zone.lng, 2));
-    return dist < 0.5; // Roughly 50km radius
+    return dist < 0.5;
   });
 
   const count = nearby.length;
@@ -113,12 +110,21 @@ function MapContent({ zones = [], hotspots = [], complaints = [], onZoneSelect, 
   const map = useMap();
   const [isReady, setIsReady] = useState(false);
 
-  // Strict synchronization guard to prevent appendChild TypeError
   useEffect(() => {
-    if (map && (map as any)._container) {
-      const timer = setTimeout(() => setIsReady(true), 100);
-      return () => clearTimeout(timer);
-    }
+    if (!map) return;
+    
+    // Strict readiness check to prevent appendChild errors
+    const checkReady = () => {
+      const container = map.getContainer();
+      if (container && container.offsetParent !== null) {
+        setIsReady(true);
+      } else {
+        // Recursive check via animation frame for better DOM synchronization
+        requestAnimationFrame(checkReady);
+      }
+    };
+    
+    checkReady();
   }, [map]);
 
   if (!isReady) return null;
